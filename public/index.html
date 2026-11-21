@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RuGram Fragment — маркет номеров</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div id="login" class="login-wrap">
+    <form id="login-form" class="card login-card">
+      <div class="brand">RuGram <span>Fragment</span></div>
+      <p class="muted">Собственный маркет номеров для self-hosted RuGram. Не имеет отношения к Telegram или Fragment.</p>
+      <label>Номер телефона RuGram
+        <input id="phone" name="phone" inputmode="tel" placeholder="+7 999 000-00-02" autocomplete="tel" required>
+      </label>
+      <label>Демо-код
+        <input id="code" name="code" inputmode="numeric" placeholder="12345" autocomplete="one-time-code" value="12345" required>
+      </label>
+      <button class="primary" type="submit">Войти в маркет</button>
+      <p id="login-hint" class="hint"></p>
+    </form>
+  </div>
+
+  <div id="app" class="app hidden">
+    <header class="topbar">
+      <div class="brand">RuGram <span>Fragment</span></div>
+      <div class="userbox">
+        <span id="who" class="who"></span>
+        <span class="pill gram" id="balance">— gram</span>
+        <span class="pill stars" id="stars-balance">— ★</span>
+        <button id="logout" class="ghost">Выйти</button>
+      </div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow">МАРКЕТ НОМЕРОВ</div>
+          <h1>Номер, который<br><em>говорит за тебя</em></h1>
+          <p class="muted">Выбери префикс, оцени пропорции цифр и забери номер навсегда. Продай или выставь на аукцион в один клик.</p>
+        </div>
+
+        <div class="picker card">
+          <div class="picker-title">Префикс номера</div>
+          <div class="prefix-switch" id="prefix-switch">
+            <div class="prefix-thumb"></div>
+            <button type="button" class="prefix-label active" data-prefix="7">
+              <b>+7</b><small>Россия</small>
+            </button>
+            <button type="button" class="prefix-label" data-prefix="888">
+              <b>+888</b><small>Международный</small>
+            </button>
+            <input type="range" id="prefix-range" min="0" max="1" step="1" value="0" aria-label="Выбрать префикс +7 или +888">
+          </div>
+          <div class="picker-meta">
+            <span id="picker-count">— номеров</span>
+            <span class="dot">•</span>
+            <span id="picker-range">от — gram</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="spin-banner card">
+        <div class="spin-copy">
+          <div class="eyebrow">РУЛЕТКА НОМЕРОВ</div>
+          <h2>Крути <span>+888</span></h2>
+          <p class="muted">Закинь 10 gram, крутани барабан — случайный номер +888 станет твоим навсегда. Каждый выпад сразу выставлен на продажу <b>минимум за 3000 gram</b>.</p>
+          <div class="spin-price">10 gram за попытку · шансы зафиксированы</div>
+          <div id="spin-odds" class="spin-odds"></div>
+        </div>
+        <div class="spin-console">
+          <div id="spin-reel" class="spin-reel">+888 ???-???-???</div>
+          <button id="spin-button" class="primary" type="button">Крутануть</button>
+          <p id="spin-hint" class="hint"></p>
+        </div>
+      </section>
+
+      <nav class="tabs">
+        <button class="tab active" data-tab="catalog">Каталог</button>
+        <button class="tab" data-tab="auctions">Аукционы <span id="auction-count" class="tab-badge">0</span></button>
+        <button class="tab" data-tab="mine">Мои номера <span id="my-count" class="tab-badge">0</span></button>
+        <button class="tab" data-tab="wallet">Кошелёк</button>
+      </nav>
+
+      <section id="tab-catalog" class="tab-panel active">
+        <div class="toolbar">
+          <div class="search-wrap">
+            <span class="search-icon">⌕</span>
+            <input id="search" placeholder="Поиск по цифрам…" inputmode="numeric">
+          </div>
+          <select id="sort" class="select">
+            <option value="rarity">Сначала редкие</option>
+            <option value="price-asc">Сначала дешевле</option>
+            <option value="price-desc">Сначала дороже</option>
+          </select>
+          <button id="refresh-catalog" class="ghost">Обновить</button>
+        </div>
+        <div id="catalog-list" class="grid"></div>
+      </section>
+
+      <section id="tab-auctions" class="tab-panel">
+        <div id="auction-list" class="grid"></div>
+      </section>
+
+      <section id="tab-mine" class="tab-panel">
+        <div class="section-head">
+          <h2>Мои номера</h2>
+          <p class="muted">Выставь номер на продажу или запусти аукцион. Покупатель получит его навсегда.</p>
+        </div>
+        <div id="mine-list" class="grid"></div>
+      </section>
+
+      <section id="tab-wallet" class="tab-panel">
+        <div class="wallet-grid">
+          <div class="card wallet-main">
+            <div class="eyebrow">КОШЕЛЁК</div>
+            <div id="wallet-balance" class="big-balance">— gram</div>
+            <p class="muted">Внутренняя валюта маркета. 5000 звёзд = 1 gram.</p>
+            <div class="wallet-stars">
+              <span>Звёзды RuGram</span>
+              <b id="wallet-stars">— ★</b>
+            </div>
+          </div>
+
+          <div class="card exchange-card">
+            <h3>Обменять звёзды → gram</h3>
+            <p class="muted">Списываем звёзды с баланса RuGram и зачисляем gram сюда. Мгновенно.</p>
+            <p class="hint">Курс: 5000 звёзд = 1 gram.</p>
+            <form id="exchange-form" class="stack-form">
+              <label>Сколько звёзд
+                <input id="exchange-stars" type="number" min="1" step="1" placeholder="например, 5000" required>
+              </label>
+              <button class="primary" type="submit">Получить gram</button>
+              <p id="exchange-hint" class="hint"></p>
+            </form>
+          </div>
+
+          <div class="card dev-card">
+            <h3>Демо-пополнение</h3>
+            <p class="muted">Только для разработки. Нужен секрет из .env.</p>
+            <form id="topup-form" class="stack-form">
+              <label>Gram
+                <input id="topup-amount" type="number" min="1" step="1" placeholder="Сумма" required>
+              </label>
+              <label>Секрет
+                <input id="topup-secret" type="password" placeholder="Секрет пополнения" required>
+              </label>
+              <button type="submit">Пополнить</button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+  <script src="/app.js"></script>
+</body>
+</html>
